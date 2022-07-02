@@ -56,7 +56,7 @@ h1 {
 
 **breakpoints: `Array<String>`**
 
-> default: `['480px', '768px', '1024px', '1200px']`
+> default: `['1000px', '750px']`
 
 Provide a custom set of breakpoints
 
