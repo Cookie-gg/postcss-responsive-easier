@@ -12,7 +12,7 @@ yarn add -D postcss @cookie_gg/postcss-responsive-easier
 
 ## Usage
 
-You have to use this plugin with postcss-nested and set it after postcss-responsive-easier.
+You have to use this plugin with [postcss-nested](https://github.com/postcss/postcss-nested) and set it after postcss-responsive-easier.
 
 ```js:postcss.config.js
 module.exports = {
