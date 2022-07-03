@@ -1,6 +1,6 @@
 {
   "name": "@cookie_gg/postcss-responsive-easier",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "PostCSS plugin that makes it easier to write responsive styles.",
   "main": "dist/index.js",
   "private": false,
