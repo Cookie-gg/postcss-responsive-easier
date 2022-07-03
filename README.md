@@ -19,7 +19,7 @@ module.exports = {
   ...
   plugins: [
     // other plugins...
-    ['postcss-responsive-easier', {
+    ['@cookie_gg/postcss-responsive-easier', {
         skip: '*',
         breakpoints: ['1000px', '750px'],
       }
