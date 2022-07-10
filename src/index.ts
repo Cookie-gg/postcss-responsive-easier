@@ -44,8 +44,10 @@ module.exports = (opts: Options): PostCSS.Plugin => {
   const options = { ...defaults, ...opts };
   return {
     postcssPlugin: 'postcss-responsive-easier',
-    Rule: (rule) => {
-      rule.each((child) => child.type === 'decl' && plugin(child, options));
+    Once: (root) => {
+      root.walkDecls((child) => {
+        if (child.type === 'decl') plugin(child, options);
+      });
     },
   };
 };
