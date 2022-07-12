@@ -8,7 +8,7 @@ type Plugin = (decl: PostCSS.Declaration, opts: Required<Options>) => void;
 type Options = { skip?: string; breakpoints?: string[] };
 
 const defaults: Required<Options> = {
-  skip: '*',
+  skip: '-',
   breakpoints: ['1000px', '750px'],
 };
 const SPLIT_REGEXP = REGEXP.SPLIT('|');
