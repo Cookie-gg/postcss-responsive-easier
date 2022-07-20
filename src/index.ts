@@ -5,18 +5,14 @@ import { REGEXP } from './libs/regexp';
 import { Converter, converter } from './libs/converter';
 
 type Plugin = (decl: PostCSS.Declaration, opts: Required<Options>) => void;
-type Options = { skip?: string; breakpoints?: string[] };
+type Options = { skip?: string; inherit?: string; breakpoints?: string[] };
 
 const defaults: Required<Options> = {
   skip: '-',
+  inherit: '_',
   breakpoints: ['1000px', '750px'],
 };
 const SPLIT_REGEXP = REGEXP.SPLIT('|');
-
-const sortBreakpoints = (breakpoints?: string[]): string[] => {
-  if (!breakpoints) return defaults.breakpoints;
-  return breakpoints.sort((a, b) => converter.unit(b).value - converter.unit(a).value);
-};
 
 type Responsive = {
   value: string;
@@ -32,7 +28,7 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
       decl.parent?.remove();
       return;
     }
-    const bps = breakpoints.map((bp) => converter.unit(bp));
+    const bps = breakpoints.map((bp) => converter.unit(bp)).sort((a, b) => b.value - a.value);
     const responsives: Responsive[] = values.map((value, i) => {
       if (value === skip) return { value };
       const numable = values.slice(i + 1).findIndex((v) => v !== skip);
@@ -60,11 +56,7 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
 };
 
 module.exports = (opts: Options): PostCSS.Plugin => {
-  const options: Required<Options> = {
-    ...defaults,
-    ...opts,
-    breakpoints: sortBreakpoints(opts.breakpoints),
-  };
+  const options = { ...defaults, ...opts };
 
   return {
     postcssPlugin: 'postcss-responsive-easier',
