@@ -5,8 +5,11 @@ const plugin = require('../dist/index.js');
 
 const plugins = [
   plugin({
-    skip: '*',
+    skip: '-',
     breakpoints: ['1000px', '750px'],
+    // ~1001px
+    //  751px~1000px
+    //  750px~
   }),
   'postcss-nested',
 ];
