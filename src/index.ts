@@ -59,7 +59,7 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
     const bps = breakpoints.map((bp) => converter.unit(bp)).sort((a, b) => b.value - a.value);
     const fnExist = decl.value.match(REGEXP.FN);
     const responsives: Responsive[] = [];
-    if (fnExist) {
+    if (fnExist && decl.value.split(fnExist[1]).length < 3) {
       const [, fn, params] = fnExist;
       const wrappedFormula = params.split(REGEXP.WRAP).slice(1, -1);
       const calcResponsives = makeCalcResponsive(wrappedFormula, skip, bps);
