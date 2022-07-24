@@ -37,17 +37,19 @@ h1 {
 }
 
 /* after */
-h1 {
-  font-size: 50px;
-}
-@media (max-width: 750px) {
+@media (min-width: 1001px) {
     h1 {
-    font-size: 30px;
+    font-size: 50px;
   }
 }
 @media (min-width: 751px) and (max-width: 1000px) {
   h1 {
     font-size: 25px;
+  }
+}
+@media (max-width: 750px) {
+    h1 {
+    font-size: 30px;
   }
 }
 ```
@@ -65,3 +67,33 @@ Provide a custom set of breakpoints
 > default: '\*'
 
 Define the skip syntax used to ignore portions of the shorthand.
+
+## Experimental
+
+> this is an experimental feature, so it will become reasons of error
+
+You can use responsive separator `|` in calc, rgb and rgba.
+
+```css:style.css
+/* before */
+h1 {
+  font-size: calc((50px | 25px | 30px) * (2 | 3 | 4));
+}
+
+/* after */
+@media (min-width: 1001px) {
+    h1 {
+    font-size: calc(50px * 2);
+  }
+}
+@media (min-width: 751px) and (max-width: 1000px) {
+  h1 {
+    font-size: calc(25px * 3);
+  }
+}
+@media (max-width: 750px) {
+    h1 {
+    font-size: calc(30px * 4);
+  }
+}
+```

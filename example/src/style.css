@@ -1,3 +1,13 @@
+:root {
+  --font-s: 15px;
+  --font-m: 25px;
+  --font-l: 35px;
+  --red: 255, 0, 0;
+  --blue: 0, 0, 255;
+  --green: 0, 128, 0;
+}
+
 h1 {
-  font-size: 30px !important | 40px !important | 10px;
+  font-size: vcalc((--font-s| - |-) - 5px * (2| - |-));
+  color: vrgb((--red | --blue | --green));
 }

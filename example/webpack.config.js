@@ -5,13 +5,32 @@ const plugin = require('../dist/index.js');
 
 const plugins = [
   plugin({
-    skip: '-',
-    breakpoints: ['1000px', '750px'],
     // ~1001px
     //  751px~1000px
     //  750px~
   }),
+  [
+    'postcss-functions',
+    {
+      functions: {
+        vrgb: (color) => `rgb(var(${color}))`,
+        vrgba: (color, opacity) => {
+          if (!opacity) return `rgba(var(${color}), 1)`;
+          return `rgba(var(${color}), ${opacity})`;
+        },
+        multi: (duration, ...args) => args.map((arg) => `${arg} ${duration}`).join(','),
+        vcalc: (formula) =>
+          `calc(${formula
+            .split(/(\-{2}[^(\+|\*|\/|\s)]+)/g)
+            .map((r, i) => (i % 2 === 1 ? `var(${r})` : r))
+            .join('')})`,
+      },
+    },
+  ],
   'postcss-nested',
+  '@lipemat/css-mqpacker',
+  'autoprefixer',
+  // 'cssnano',
 ];
 
 module.exports = {
