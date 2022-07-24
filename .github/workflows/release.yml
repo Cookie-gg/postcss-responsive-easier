@@ -31,6 +31,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.package-version.outputs.version }}
           prefix: "v"
+      - run: echo contains(needs.setup.outputs.tag-name, 'rc')
 
   publish:
     needs: setup
