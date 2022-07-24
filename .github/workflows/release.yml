@@ -31,7 +31,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.package-version.outputs.version }}
           prefix: "v"
-      - run: echo ${{ contains(needs.setup.outputs.tag-name, 'rc') }}
 
   publish:
     needs: setup
@@ -50,7 +49,12 @@ jobs:
           scope: "@cookie_gg"
       - run: npm i
       - run: npm run build
-      - run: npm publish --access=public ./
+      - run: npm publish --access=public ./ --tag=latest
+        if: contains(needs.setup.outputs.tag-name, 'rc') === 'false'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish --access=public ./ --tag=beta
+        if: contains(needs.setup.outputs.tag-name, 'rc') === 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
