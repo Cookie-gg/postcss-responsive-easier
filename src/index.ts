@@ -30,18 +30,23 @@ const makeResponsive = (values: string[], skip: string, bps: ReturnType<Converte
 
 const makeCalcResponsive = (formulas: string[], skip: string, bps: ReturnType<Converter['unit']>[]): Responsive[][] => {
   let curtSum = 0;
+
   return formulas.map((fomula, i) => {
     if (fomula.match(SPLIT_REGEXP)) {
       const values = fomula.split(SPLIT_REGEXP);
+
       if (values.length - 1 !== bps.length) {
         throw new Error(`You must set ${bps.length + 1} values for each breakpoint.`);
       }
+
       const sum = values.reduce((acc, cur, i) => (cur === skip ? acc : acc + i + 1), 0);
+
       if (i !== 0 && curtSum !== sum) {
         throw new Error(
           'You must set a value for same breakpoint. If you want to set a value for a breakpoint, You can set like below.\n```\nfont-size: - | calc(100vw / 100 * 1px) | - ;\n```',
         );
       }
+
       curtSum = sum;
       return makeResponsive(values, skip, bps);
     }
@@ -63,6 +68,7 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
       const [, fn, params] = fnExist;
       const wrappedFormula = params.split(REGEXP.WRAP).slice(1, -1);
       const calcResponsives = makeCalcResponsive(wrappedFormula, skip, bps);
+
       responsives.push(
         ...new Array(bps.length + 1).fill(null).map((_, idx) => {
           if (calcResponsives.find((r) => r[idx] && r[idx].value === skip)) return { value: skip };
@@ -77,6 +83,7 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
       );
     } else {
       const values = decl.value.split(SPLIT_REGEXP);
+
       if (values.length - 1 !== bps.length) {
         throw new Error(`You must set ${bps.length + 1} values as breakpoints are ${breakpoints}`);
       }
@@ -85,13 +92,15 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
         decl.parent?.remove();
         return;
       }
+
       responsives.push(...makeResponsive(values, skip, bps));
     }
 
     responsives.map(({ value: v, min, max }, i) => {
       if (v === skip) return;
-      const mediaQuery = createMediaQuery(min, max);
       const { value, important } = converter.imp(v);
+
+      const mediaQuery = createMediaQuery(min, max);
       const newDecl = postcss.decl({
         prop: decl.prop,
         value,
