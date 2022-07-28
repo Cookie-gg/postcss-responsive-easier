@@ -63,8 +63,10 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
   if (!decl.prop.match(/^\-{2}/) && decl.value.match(SPLIT_REGEXP)) {
     const bps = breakpoints.map((bp) => converter.unit(bp)).sort((a, b) => b.value - a.value);
     const fnExist = decl.value.match(REGEXP.FN);
+    const values = decl.value.split(SPLIT_REGEXP);
     const responsives: Responsive[] = [];
-    if (fnExist && decl.value.split(fnExist[1]).length < 3) {
+
+    if (!values.slice(1).some((v) => v.match(REGEXP.FN_NAME)) && fnExist) {
       const [, fn, params] = fnExist;
       const wrappedFormula = params.split(REGEXP.WRAP).slice(1, -1);
       const calcResponsives = makeCalcResponsive(wrappedFormula, skip, bps);
@@ -82,8 +84,6 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
         }),
       );
     } else {
-      const values = decl.value.split(SPLIT_REGEXP);
-
       if (values.length - 1 !== bps.length) {
         throw new Error(`You must set ${bps.length + 1} values as breakpoints are ${breakpoints}`);
       }

@@ -8,8 +8,9 @@
 }
 
 h1 {
-  font-size: vcalc((--font-s| - |-) - 5px * (2| - |-));
+  /* font-size: vcalc((--font-s| - |-) - 5px * (2| - |-));
   color: vrgb((--red | --blue | --green));
-  margin: calc(5px * 2) | calc(5px * 3) | calc(5px * 4);
+  margin: calc(5px * 2) | calc(5px * 3) | calc(5px * 4); */
   padding: var((--font-s | --font-m | --font-l));
+  border-width: calc(5px * 2) | calc(10px * 2) | calc(15px * 2);
 }
