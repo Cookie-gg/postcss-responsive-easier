@@ -68,7 +68,7 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
 
     if (!values.slice(1).some((v) => v.match(REGEXP.FN_NAME)) && fnExist) {
       const [, fn, params] = fnExist;
-      const wrappedFormula = params.split(REGEXP.WRAP).slice(1, -1);
+      const wrappedFormula = params.split(REGEXP.WRAP).filter((formula) => formula !== '');
       const calcResponsives = makeCalcResponsive(wrappedFormula, skip, bps);
 
       responsives.push(
