@@ -29,9 +29,10 @@ const makeResponsive = (values: string[], skip: string, bps: ReturnType<Converte
 };
 
 const makeCalcResponsive = (formulas: string[], skip: string, bps: ReturnType<Converter['unit']>[]): Responsive[][] => {
-  let curtSum = 0;
+  let maxSum = 0;
+  let resObjIdx = 0;
 
-  return formulas.map((fomula, i) => {
+  return formulas.map((fomula) => {
     if (fomula.match(SPLIT_REGEXP)) {
       const values = fomula.split(SPLIT_REGEXP);
 
@@ -41,16 +42,18 @@ const makeCalcResponsive = (formulas: string[], skip: string, bps: ReturnType<Co
 
       const sum = values.reduce((acc, cur, i) => (cur === skip ? acc : acc + i + 1), 0);
 
-      if (i !== 0 && curtSum !== sum) {
+      if (resObjIdx !== 0 && maxSum !== sum) {
         throw new Error(
           'You must set a value for same breakpoint. If you want to set a value for a breakpoint, You can set like below.\n```\nfont-size: - | calc(100vw / 100 * 1px) | - ;\n```',
         );
       }
 
-      curtSum = sum;
+      maxSum = sum;
+      resObjIdx++;
+
       return makeResponsive(values, skip, bps);
     }
-    return [{ value: fomula, min: '', max: '' }];
+    return [{ value: converter.wrap(fomula), min: '', max: '' }];
   });
 };
 
@@ -68,7 +71,11 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
 
     if (!values.slice(1).some((v) => v.match(REGEXP.FN_NAME)) && fnExist) {
       const [, fn, params] = fnExist;
-      const wrappedFormula = params.split(REGEXP.WRAP).filter((formula) => formula !== '');
+      const wrappedFormula = params
+        .replaceAll(/\(/g, '（')
+        .replaceAll(/\)/g, '）')
+        .split(REGEXP.WRAP)
+        .filter((formula) => formula !== '');
       const calcResponsives = makeCalcResponsive(wrappedFormula, skip, bps);
 
       responsives.push(
