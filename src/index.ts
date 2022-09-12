@@ -32,29 +32,38 @@ const makeCalcResponsive = (formulas: string[], skip: string, bps: ReturnType<Co
   let maxSum = 0;
   let resObjIdx = 0;
 
-  return formulas.map((fomula) => {
-    if (fomula.match(SPLIT_REGEXP)) {
-      const values = fomula.split(SPLIT_REGEXP);
-
-      if (values.length - 1 !== bps.length) {
-        throw new Error(`You must set ${bps.length + 1} values for each breakpoint.`);
+  return formulas
+    .filter((fomula, idx) => {
+      if (
+        !(formulas[idx + 1] && formulas[idx + 1].match(SPLIT_REGEXP)) &&
+        !(formulas[idx - 1] && formulas[idx - 1].match(SPLIT_REGEXP))
+      ) {
+        return fomula;
       }
+    })
+    .map((fomula) => {
+      if (fomula.match(SPLIT_REGEXP)) {
+        const values = fomula.split(SPLIT_REGEXP);
 
-      const sum = values.reduce((acc, cur, i) => (cur === skip ? acc : acc + i + 1), 0);
+        if (values.length - 1 !== bps.length) {
+          throw new Error(`You must set ${bps.length + 1} values for each breakpoint.`);
+        }
 
-      if (resObjIdx !== 0 && maxSum !== sum) {
-        throw new Error(
-          'You must set a value for same breakpoint. If you want to set a value for a breakpoint, You can set like below.\n```\nfont-size: - | calc(100vw / 100 * 1px) | - ;\n```',
-        );
+        const sum = values.reduce((acc, cur, i) => (cur === skip ? acc : acc + i + 1), 0);
+
+        if (resObjIdx !== 0 && maxSum !== sum) {
+          throw new Error(
+            'You must set a value for same breakpoint. If you want to set a value for a breakpoint, You can set like below.\n```\nfont-size: - | calc(100vw / 100 * 1px) | - ;\n```',
+          );
+        }
+
+        maxSum = sum;
+        resObjIdx++;
+
+        return makeResponsive(values, skip, bps);
       }
-
-      maxSum = sum;
-      resObjIdx++;
-
-      return makeResponsive(values, skip, bps);
-    }
-    return [{ value: converter.wrap(fomula), min: '', max: '' }];
-  });
+      return [{ value: converter.wrap(fomula), min: '', max: '' }];
+    });
 };
 
 const createMediaQuery = (min?: string, max?: string) => {
@@ -75,7 +84,7 @@ const plugin: Plugin = (decl, { skip, breakpoints }) => {
         .replaceAll(/\(/g, '（')
         .replaceAll(/\)/g, '）')
         .split(REGEXP.WRAP)
-        .filter((formula) => formula !== '');
+        .filter((formula, idx) => formula !== '');
       const calcResponsives = makeCalcResponsive(wrappedFormula, skip, bps);
 
       responsives.push(
