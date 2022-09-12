@@ -3,6 +3,5 @@ export const REGEXP = {
   SPLIT: (syntax: string, flags?: string) => new RegExp(`\\s*\\${syntax}\\s*`, flags),
   FN: /^(v?calc|v?rgb[a]?|var)\((.*?)\)$/,
   FN_NAME: /(v?calc|v?rgb[a]?|var)/,
-
-  WRAP: /\(|\)/,
+  WRAP: /(（|）)/g,
 };

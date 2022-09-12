@@ -5,6 +5,13 @@ export const converter = {
   imp: (str: string) => {
     return { value: str.replace(/!important/, ''), important: str.includes('!important') };
   },
+  wrap: (str: string) => {
+    if (str === '（') return '(';
+    if (str === '）') return ')';
+    if (str === '(') return '（';
+    if (str === ')') return '）';
+    return str;
+  },
 };
 
 export type Converter = typeof converter;
