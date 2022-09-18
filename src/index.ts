@@ -6,22 +6,17 @@ import { Converter, converter } from './libs/converter';
 
 type Plugin = (decl: PostCSS.Declaration, opts: Required<Options>) => void;
 type Options = { skip?: string; breakpoints?: string[] };
+type Responsive = { value: string; max?: string; min?: string };
 
 const defaults: Required<Options> = { skip: '-', breakpoints: ['1000px', '750px'] };
-
-const SPLIT_REGEXP = REGEXP.SPLIT('|');
-
-type Responsive = {
-  value: string;
-  max?: string;
-  min?: string;
-};
 
 const makeResponsive = (values: string[], skip: string, bps: ReturnType<Converter['unit']>[]): Responsive[] => {
   return values.map((value, i) => {
     if (value === skip) return { value };
+
     const numable = values.slice(i + 1).findIndex((v) => v !== skip);
     const minIdx = numable !== -1 ? numable + i : i;
+
     const min = i !== values.length - 1 ? `(min-width: ${bps[minIdx].value + 1}${bps[minIdx].unit || 'px'})` : '';
     const max = i === 0 ? '' : `(max-width: ${bps[i - 1].value}${bps[i - 1].unit || 'px'})`;
     return { value, min, max };
@@ -35,15 +30,15 @@ const makeCalcResponsive = (formulas: string[], skip: string, bps: ReturnType<Co
   return formulas
     .filter((fomula, idx) => {
       if (
-        !(formulas[idx + 1] && formulas[idx + 1].match(SPLIT_REGEXP)) &&
-        !(formulas[idx - 1] && formulas[idx - 1].match(SPLIT_REGEXP))
+        !(formulas[idx + 1] && formulas[idx + 1].match(REGEXP.SPLIT)) &&
+        !(formulas[idx - 1] && formulas[idx - 1].match(REGEXP.SPLIT))
       ) {
         return fomula;
       }
     })
     .map((fomula) => {
-      if (fomula.match(SPLIT_REGEXP)) {
-        const values = fomula.split(SPLIT_REGEXP);
+      if (fomula.match(REGEXP.SPLIT)) {
+        const values = fomula.split(REGEXP.SPLIT);
 
         if (values.length - 1 !== bps.length) {
           throw new Error(`You must set ${bps.length + 1} values for each breakpoint.`);
@@ -72,10 +67,10 @@ const createMediaQuery = (min?: string, max?: string) => {
 };
 
 const plugin: Plugin = (decl, { skip, breakpoints }) => {
-  if (!decl.prop.match(/^\-{2}/) && decl.value.match(SPLIT_REGEXP)) {
+  if (!decl.prop.match(/^\-{2}/) && decl.value.match(REGEXP.SPLIT)) {
     const bps = breakpoints.map((bp) => converter.unit(bp)).sort((a, b) => b.value - a.value);
     const fnExist = decl.value.match(REGEXP.FN);
-    const values = decl.value.split(SPLIT_REGEXP);
+    const values = decl.value.split(REGEXP.SPLIT);
     const responsives: Responsive[] = [];
 
     if (!values.slice(1).some((v) => v.match(REGEXP.FN_NAME)) && fnExist) {

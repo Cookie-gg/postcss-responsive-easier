@@ -12,5 +12,26 @@ h1 {
   color: vrgb((--red | --blue | --green));
   margin: calc(5px * 2) | calc(5px * 3) | calc(5px * 4); */
   padding: var((--font-s | --font-m | --font-l));
+  &:is(h1) {
+    font-size: var((--font-xxxxl | --font-xxxl | --font-xxl));
+  }
+  &:is(h2) {
+    font-size: var((--font-xxl | - | --font-xl));
+  }
+  &:is(h3) {
+    font-size: var((--font-xl | - | --font-l));
+  }
+  &:is(h4) {
+    font-size: var(--font-l);
+  }
+  &:is(h5) {
+    font-size: var(--font-m);
+  }
+  &:is(h6) {
+    font-weight: 500;
+    font-size: var(--font-s);
+  }
+  font-size: var((--font-xxxxl | --font-xxxl | --font-xxl));
   border-width: calc(5px * 2) | calc(10px * 2) | calc(15px * 2);
+  min-width: vcalc(((890px | 940px | 690px) - --spacing-m * 2 - 2px) / 3);
 }
